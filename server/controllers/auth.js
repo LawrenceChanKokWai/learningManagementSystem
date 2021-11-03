@@ -40,7 +40,10 @@ export const login = async (req, res) => {
 		const { email, password } = req.body;
 		// check if our db has user with that email
 		const user = await User.findOne({ email }).exec();
-		if (!user) return res.status(400).send("No user found");
+		if (!user)
+			return res
+				.status(400)
+				.send("No user found, Please register if you have not done so.");
 		// check password
 		const match = await comparePassword(password, user.password);
 		// create signed jwt
@@ -59,5 +62,14 @@ export const login = async (req, res) => {
 	} catch (err) {
 		console.log(err);
 		return res.status(400).send("Error. Try again.");
+	}
+};
+
+export const logout = async (req, res) => {
+	try {
+		res.clearCookie("token");
+		return res.json({ message: "Signout success" });
+	} catch (err) {
+		console.log(err);
 	}
 };
